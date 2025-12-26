@@ -1,0 +1,6 @@
+{
+  "sweetpad.build.scheme": "MTGLifeCounter",
+  "sweetpad.build.destination": "iPhone 17 Pro",
+  "sweetpad.project.xcodegen.watch": true,
+  "sweetpad.project.xcodegen.autoGenerate": true
+}

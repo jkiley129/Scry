@@ -1,0 +1,20 @@
+name: MTGLifeCounter
+
+options:
+  bundleIdPrefix: com.joe
+
+targets:
+  MTGLifeCounter:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources: 
+      - MTGLifeCounter
+    info:
+      path: MTGLifeCounter/Info.plist
+      properties:
+        UILaunchScreen: {}
+        UIStatusBarHidden: true
+        UIViewControllerBasedStatusBarAppearance: false
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.joe.MTGLifeCounter
