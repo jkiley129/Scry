@@ -91,12 +91,13 @@ struct ContentView: View {
     if players.count >= 4 {
       if numberOfPlayers == 2 {
         VStack(spacing: 0) {
-          PlayerView(player: $players[0], rotation: 180)
+          PlayerView(player: $players[0])
+            .rotationEffect(.degrees(180))
             .frame(width: geo.size.width, height: geo.size.height / 2)
 
           Rectangle()
-            .fill(Color.gray)
-            .frame(height: 2)
+            .fill(Color.black)
+            .frame(height: 6)
 
           PlayerView(player: $players[1])
             .frame(width: geo.size.width, height: geo.size.height / 2)
@@ -105,29 +106,41 @@ struct ContentView: View {
         ZStack {
           VStack(spacing: 0) {
             HStack(spacing: 0) {
-              PlayerView(player: $players[0], rotation: 90)
-                .frame(width: geo.size.width / 2, height: geo.size.height / 2)
+              // Player 1 (Top Left) - Rotated 90
+              PlayerView(player: $players[0])
+                .frame(width: geo.size.height / 2, height: geo.size.width / 2)  // Swap dimensions
+                .rotationEffect(.degrees(90))
+                .frame(width: geo.size.width / 2, height: geo.size.height / 2)  // Target frame
 
-              PlayerView(player: $players[1], rotation: -90)
-                .frame(width: geo.size.width / 2, height: geo.size.height / 2)
+              // Player 2 (Top Right) - Rotated -90
+              PlayerView(player: $players[1])
+                .frame(width: geo.size.height / 2, height: geo.size.width / 2)  // Swap dimensions
+                .rotationEffect(.degrees(-90))
+                .frame(width: geo.size.width / 2, height: geo.size.height / 2)  // Target frame
             }
 
             Rectangle()
               .fill(Color.black)
-              .frame(height: 2)
+              .frame(height: 6)
 
             HStack(spacing: 0) {
-              PlayerView(player: $players[2], rotation: 90)
-                .frame(width: geo.size.width / 2, height: geo.size.height / 2)
+              // Player 3 (Bottom Left) - Rotated 90
+              PlayerView(player: $players[2])
+                .frame(width: geo.size.height / 2, height: geo.size.width / 2)  // Swap dimensions
+                .rotationEffect(.degrees(90))
+                .frame(width: geo.size.width / 2, height: geo.size.height / 2)  // Target frame
 
-              PlayerView(player: $players[3], rotation: -90)
-                .frame(width: geo.size.width / 2, height: geo.size.height / 2)
+              // Player 4 (Bottom Right) - Rotated -90
+              PlayerView(player: $players[3])
+                .frame(width: geo.size.height / 2, height: geo.size.width / 2)  // Swap dimensions
+                .rotationEffect(.degrees(-90))
+                .frame(width: geo.size.width / 2, height: geo.size.height / 2)  // Target frame
             }
           }
 
           Rectangle()
             .fill(Color.black)
-            .frame(width: 2)
+            .frame(width: 6)
             .frame(maxHeight: .infinity)
         }
       }

@@ -121,6 +121,7 @@ struct SettingsMenuView: View {
                     ColorPicker("", selection: $players[index].color)
                       .labelsHidden()
                   }
+                  .padding(10)  // Prevent clipping of selection stroke on all sides
                 }
               }
             }
