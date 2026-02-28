@@ -18,3 +18,12 @@ targets:
         UIViewControllerBasedStatusBarAppearance: false
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.joe.MTGLifeCounter
+
+  MTGLifeCounterTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources: 
+      - MTGLifeCounterTests
+    dependencies:
+      - target: MTGLifeCounter

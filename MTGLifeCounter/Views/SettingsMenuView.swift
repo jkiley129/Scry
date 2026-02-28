@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SettingsMenuView: View {
+  @EnvironmentObject var gameHistory: GameHistory
   @Binding var numberOfPlayers: Int
   @Binding var showMenu: Bool
   @Binding var isCommanderMode: Bool
@@ -8,7 +9,7 @@ struct SettingsMenuView: View {
   let onPlayersChanged: () -> Void
 
   // Preset colors for quick selection
-  let presetColors: [Color] = [
+  let presetColors: [CodableColor] = [
     .red, .blue, .green, .orange, .purple, .pink, .yellow, .gray, .black, .white,
   ]
 
@@ -32,34 +33,20 @@ struct SettingsMenuView: View {
               .font(.system(size: 18, weight: .semibold))
               .foregroundColor(.gray)
 
-            HStack(spacing: 30) {
-              Button(action: {
-                numberOfPlayers = 2
-                onPlayersChanged()
-                // Keep menu open to adjust colors if desired, or close?
-                // User flow: might want to set colors for new players.
-                // But onPlayersChanged resets players.
-              }) {
-                Text("2")
-                  .font(.system(size: 24, weight: .semibold))
-                  .foregroundColor(numberOfPlayers == 2 ? .white : .gray)
-                  .padding(.horizontal, 30)
-                  .padding(.vertical, 12)
-                  .background(numberOfPlayers == 2 ? Color.blue : Color.white.opacity(0.1))
-                  .cornerRadius(12)
-              }
-
-              Button(action: {
-                numberOfPlayers = 4
-                onPlayersChanged()
-              }) {
-                Text("4")
-                  .font(.system(size: 24, weight: .semibold))
-                  .foregroundColor(numberOfPlayers == 4 ? .white : .gray)
-                  .padding(.horizontal, 30)
-                  .padding(.vertical, 12)
-                  .background(numberOfPlayers == 4 ? Color.blue : Color.white.opacity(0.1))
-                  .cornerRadius(12)
+            HStack(spacing: 15) {
+              ForEach([2, 4, 5, 6], id: \.self) { count in
+                Button(action: {
+                  numberOfPlayers = count
+                  onPlayersChanged()
+                }) {
+                  Text("\(count)")
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundColor(numberOfPlayers == count ? .white : .gray)
+                    .frame(minWidth: 44)
+                    .padding(.vertical, 12)
+                    .background(numberOfPlayers == count ? Color.blue : Color.white.opacity(0.1))
+                    .cornerRadius(12)
+                }
               }
             }
           }
@@ -92,39 +79,27 @@ struct SettingsMenuView: View {
 
           // Player Colors
           VStack(spacing: 20) {
-            Text("Player Colors")
+            Text("Player Names & Colors")
               .font(.system(size: 18, weight: .semibold))
               .foregroundColor(.gray)
 
             ForEach(0..<min(numberOfPlayers, players.count), id: \.self) { index in
-              VStack(alignment: .leading, spacing: 8) {
-                Text("Player \(index + 1)")
-                  .font(.system(size: 16, weight: .medium))
-                  .foregroundColor(.white)
-
-                ScrollView(.horizontal, showsIndicators: false) {
-                  HStack(spacing: 12) {
-                    ForEach(presetColors, id: \.self) { color in
-                      Circle()
-                        .fill(color)
-                        .frame(width: 30, height: 30)
-                        .overlay(
-                          Circle()
-                            .stroke(Color.white, lineWidth: players[index].color == color ? 3 : 0)
-                        )
-                        .onTapGesture {
-                          players[index].color = color
-                        }
-                    }
-
-                    // Color Picker for custom colors
-                    ColorPicker("", selection: $players[index].color)
-                      .labelsHidden()
-                  }
-                  .padding(10)  // Prevent clipping of selection stroke on all sides
-                }
-              }
+              playerNameAndColorRow(at: index)
             }
+          }
+
+          Button(action: {
+            onPlayersChanged()
+            gameHistory.clear()
+            showMenu = false
+          }) {
+            Text("Reset Game")
+              .font(.system(size: 18, weight: .bold))
+              .foregroundColor(.white)
+              .padding(.horizontal, 40)
+              .padding(.vertical, 12)
+              .background(Color.red.opacity(0.8))
+              .cornerRadius(25)
           }
 
           Button(action: {
@@ -147,5 +122,53 @@ struct SettingsMenuView: View {
         .padding(20)
       }
     }
+  }
+  
+  // Helper functions to break up complex expressions
+  private func playerNameAndColorRow(at index: Int) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      TextField("Player \(index + 1)", text: $players[index].name)
+        .font(.system(size: 16, weight: .medium))
+        .foregroundColor(.white)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color.white.opacity(0.1))
+        .cornerRadius(8)
+
+      ScrollView(.horizontal, showsIndicators: false) {
+        HStack(spacing: 12) {
+          ForEach(presetColors, id: \.self) { color in
+            colorCircle(for: color, at: index)
+          }
+
+          // Color Picker for custom colors
+          customColorPicker(for: index)
+        }
+        .padding(10)
+      }
+    }
+  }
+  
+  private func colorCircle(for color: CodableColor, at index: Int) -> some View {
+    Circle()
+      .fill(color.color)
+      .frame(width: 30, height: 30)
+      .overlay(
+        Circle()
+          .stroke(Color.white, lineWidth: players[index].color == color ? 3 : 0)
+      )
+      .onTapGesture {
+        players[index].color = color
+      }
+  }
+  
+  private func customColorPicker(for index: Int) -> some View {
+    let binding = Binding<Color>(
+      get: { players[index].swiftUIColor },
+      set: { players[index].color = CodableColor(color: $0) }
+    )
+    
+    return ColorPicker("", selection: binding)
+      .labelsHidden()
   }
 }

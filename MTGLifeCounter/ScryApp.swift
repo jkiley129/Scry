@@ -2,12 +2,14 @@ import SwiftUI
 
 @main
 struct ScryApp: App {
+  @StateObject private var gameHistory = GameHistory()
   @State private var showingSplashScreen = true
 
   var body: some Scene {
     WindowGroup {
       ZStack {
         ContentView()
+          .environmentObject(gameHistory)
 
         if showingSplashScreen {
           SplashScreenView()
